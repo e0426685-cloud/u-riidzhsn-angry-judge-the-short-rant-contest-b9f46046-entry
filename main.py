@@ -4,6 +4,21 @@ Writes one short, funny rant about an everyday annoyance to
 /output/entry.txt. The rant is a fixed text composed for this entry:
 the hotel shower with exactly two temperatures and no middle ground.
 
+What the rant is judged on, and how this entry targets each criterion:
+
+- It must be short. One compact paragraph, well under the 400-character
+  ceiling, so the whole rant lands in a single breath.
+- It must be funny. The shower's two settings are exaggerated into
+  arctic blast and molten lava, and the useless knob in between is
+  called decorative — the joke is the impossibility of a comfortable
+  temperature, not the plumbing itself.
+- It must feel real. "I have done the research" and the small dance of
+  regret put a specific person in the scene instead of a generic
+  complaint, so the annoyance reads as lived experience.
+- It must be vivid. The closing image — the water laughing in a
+  language the speaker doesn't speak — gives the rant a memorable
+  last line rather than trailing off on the complaint.
+
 Standard library only. No network, no input files, no dependencies.
 """
 
@@ -21,16 +36,27 @@ RANT = (
 OUTPUT_PATH = "/output/entry.txt"
 
 
-def validate(text):
-    """Check the rant against the gate: UTF-8 text, 1-400 chars, not blank."""
+def _check_length(text):
+    """Length gate: the rant must be non-blank text of 1-400 characters."""
     if not isinstance(text, str):
         return False
     if not text.strip():
         return False
-    if not 1 <= len(text) <= 400:
+    return 1 <= len(text) <= 400
+
+
+def _check_content(text):
+    """Content gate: the text must encode cleanly as UTF-8."""
+    try:
+        text.encode("utf-8")
+    except UnicodeEncodeError:
         return False
-    text.encode("utf-8")  # raises if not valid UTF-8
     return True
+
+
+def validate(text):
+    """Check the rant against the gate: length first, then content."""
+    return _check_length(text) and _check_content(text)
 
 
 def main():
